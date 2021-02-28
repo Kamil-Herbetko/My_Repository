@@ -14,14 +14,18 @@ class Tile:
         self.y = y
         self.width = 70
         self.height = 70
-        self.text = ""
+        self.text = 0
         self.mode = 0
         self.font = MAIN_FONT
         self.color = (0, 0, 0)
         self.predefined = False
 
     def draw(self, win):
-        txt = self.font.render(self.text, True, self.color)
+        if self.text != 0:
+            txt = self.font.render(str(self.text), True, self.color)
+        else:
+            txt = self.font.render("", True, self.color)
+
         if self.font == MAIN_FONT:
             win.blit(txt, (self.x + self.width/2 - txt.get_width()//2 , self.y + self.height/2 - txt.get_height()//2 ))
         else:
@@ -37,6 +41,75 @@ class Tile:
 
     def actionListener(self, t):
         self.text = t
+
+
+def checkGrid(grid):
+    for row in range(0,9):
+        for col in range(0,9):
+            if grid[row][col]==0:
+                return False
+    return True
+
+
+def solveGrid(tiles):
+    grid = [[], [], [], [], [], [], [], [], []]
+    for i in range (9):
+        for j in range(9):
+            if tiles[i][j].predefined:
+                grid[i].append(tiles[i][j].text)
+            else:
+                grid[i].append(0)
+    #Find next empty cell
+    for i in range(0,81):
+        row=i//9
+        col=i%9
+        if grid[row][col] == 0:
+            for value in range (1,10):
+                #Check that this value has not already be used on this row
+                if not(value in grid[row]):
+                #Check that this value has not already be used on this column
+                    if not value in (grid[0][col],grid[1][col],grid[2][col],grid[3][col],grid[4][col],grid[5][col],grid[6][col],grid[7][col],grid[8][col]):
+                        #Identify which of the 9 squares we are working on
+                        square=[]
+                        if row<3:
+                            if col<3:
+                                square=[grid[i][0:3] for i in range(0,3)]
+                            elif col<6:
+                                square=[grid[i][3:6] for i in range(0,3)]
+                            else:
+                                square=[grid[i][6:9] for i in range(0,3)]
+                        elif row<6:
+                            if col<3:
+                                square=[grid[i][0:3] for i in range(3,6)]
+                            elif col<6:
+                                square=[grid[i][3:6] for i in range(3,6)]
+                            else:
+                                square=[grid[i][6:9] for i in range(3,6)]
+                        else:
+                            if col<3:
+                                square=[grid[i][0:3] for i in range(6,9)]
+                            elif col<6:
+                                square=[grid[i][3:6] for i in range(6,9)]
+                            else:
+                                square=[grid[i][6:9] for i in range(6,9)]
+                        #Check that this value has not already be used on this 3x3 square
+                        if not value in (square[0] + square[1] + square[2]):
+                            grid[row][col] = value
+                            tiles[row][col].font = MAIN_FONT
+                            tiles[row][col].text = value
+                            tiles[row][col].predefined = True
+                            pygame.display.update()
+
+                            if checkGrid(grid):
+                                print("Grid Complete and Checked")
+                                return True
+                            else:
+                                if solveGrid(tiles):
+                                    return True
+            break
+    print("Backtrack")
+    grid[row][col] = 0
+    tiles[row][col].text = 0
 
 
 
@@ -112,48 +185,48 @@ if __name__ == '__main__':
             if event.type == pygame.KEYDOWN:
                 if len(clicked) == 1:
                     if event.key == pygame.K_1:
-                        clicked[0].actionListener("1")
+                        clicked[0].actionListener(1)
                         clicked[0].mode = 0
                         clicked.pop(0)
                     elif event.key == pygame.K_2:
-                        clicked[0].actionListener("2")
+                        clicked[0].actionListener(2)
                         clicked[0].mode = 0
                         clicked.pop(0)
                     elif event.key == pygame.K_3:
-                        clicked[0].actionListener("3")
+                        clicked[0].actionListener(3)
                         clicked[0].mode = 0
                         clicked.pop(0)
                     elif event.key == pygame.K_4:
-                        clicked[0].actionListener("4")
+                        clicked[0].actionListener(4)
                         clicked[0].mode = 0
                         clicked.pop(0)
                     elif event.key == pygame.K_5:
-                        clicked[0].actionListener("5")
+                        clicked[0].actionListener(5)
                         clicked[0].mode = 0
                         clicked.pop(0)
                     elif event.key == pygame.K_6:
-                        clicked[0].actionListener("6")
+                        clicked[0].actionListener(6)
                         clicked[0].mode = 0
                         clicked.pop(0)
                     elif event.key == pygame.K_7:
-                        clicked[0].actionListener("7")
+                        clicked[0].actionListener(7)
                         clicked[0].mode = 0
                         clicked.pop(0)
                     elif event.key == pygame.K_8:
-                        clicked[0].actionListener("8")
+                        clicked[0].actionListener(8)
                         clicked[0].mode = 0
                         clicked.pop(0)
                     elif event.key == pygame.K_9:
-                        clicked[0].actionListener("9")
+                        clicked[0].actionListener(9)
                         clicked[0].mode = 0
                         clicked.pop(0)
                     elif event.key == pygame.K_BACKSPACE:
-                        clicked[0].actionListener("")
+                        clicked[0].actionListener(0)
                         clicked[0].mode = 0
                         clicked.pop(0)
 
                 if event.key == pygame.K_SPACE:
-                    pass
+                    solveGrid(tiles)
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
