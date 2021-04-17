@@ -60,9 +60,9 @@ def solveGrid(tiles):
             else:
                 grid[i].append(0)
     #Find next empty cell
-    for i in range(0,81):
-        row=i//9
-        col=i%9
+    for i in range(0, 81):
+        row = i//9
+        col = i % 9
         if grid[row][col] == 0:
             for value in range (1,10):
                 #Check that this value has not already be used on this row
