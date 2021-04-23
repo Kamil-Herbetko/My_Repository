@@ -53,46 +53,43 @@ def checkGrid(grid):
 
 def solveGrid(tiles):
     grid = [[], [], [], [], [], [], [], [], []]
-    for i in range (9):
+    for i in range(9):
         for j in range(9):
             if tiles[i][j].predefined:
                 grid[i].append(tiles[i][j].text)
             else:
                 grid[i].append(0)
-    #Find next empty cell
+
     for i in range(0, 81):
         row = i//9
         col = i % 9
         if grid[row][col] == 0:
-            for value in range (1,10):
-                #Check that this value has not already be used on this row
+            for value in range(1, 10):
                 if not(value in grid[row]):
-                #Check that this value has not already be used on this column
-                    if not value in (grid[0][col],grid[1][col],grid[2][col],grid[3][col],grid[4][col],grid[5][col],grid[6][col],grid[7][col],grid[8][col]):
-                        #Identify which of the 9 squares we are working on
-                        square=[]
-                        if row<3:
-                            if col<3:
-                                square=[grid[i][0:3] for i in range(0,3)]
-                            elif col<6:
-                                square=[grid[i][3:6] for i in range(0,3)]
+                    if not value in (grid[0][col], grid[1][col], grid[2][col], grid[3][col], grid[4][col], grid[5][col], grid[6][col], grid[7][col], grid[8][col]):
+                        square = []
+                        if row < 3:
+                            if col < 3:
+                                square = [grid[j][0:3] for j in range(0, 3)]
+                            elif col < 6:
+                                square = [grid[j][3:6] for j in range(0, 3)]
                             else:
-                                square=[grid[i][6:9] for i in range(0,3)]
-                        elif row<6:
-                            if col<3:
-                                square=[grid[i][0:3] for i in range(3,6)]
-                            elif col<6:
-                                square=[grid[i][3:6] for i in range(3,6)]
+                                square = [grid[j][6:9] for j in range(0, 3)]
+                        elif row < 6:
+                            if col < 3:
+                                square = [grid[j][0:3] for j in range(3, 6)]
+                            elif col < 6:
+                                square = [grid[j][3:6] for j in range(3, 6)]
                             else:
-                                square=[grid[i][6:9] for i in range(3,6)]
+                                square = [grid[j][6:9] for j in range(3, 6)]
                         else:
-                            if col<3:
-                                square=[grid[i][0:3] for i in range(6,9)]
-                            elif col<6:
-                                square=[grid[i][3:6] for i in range(6,9)]
+                            if col < 3:
+                                square = [grid[j][0:3] for j in range(6, 9)]
+                            elif col < 6:
+                                square = [grid[j][3:6] for j in range(6, 9)]
                             else:
-                                square=[grid[i][6:9] for i in range(6,9)]
-                        #Check that this value has not already be used on this 3x3 square
+                                square = [grid[j][6:9] for j in range(6, 9)]
+
                         if not value in (square[0] + square[1] + square[2]):
                             grid[row][col] = value
                             tiles[row][col].font = MAIN_FONT
@@ -107,13 +104,11 @@ def solveGrid(tiles):
                                 if solveGrid(tiles):
                                     return True
             break
-    print("Backtrack")
     grid[row][col] = 0
     tiles[row][col].text = 0
 
 
-
-def redrawWindow(win, time_from_start, tiles):
+def redrawWindow(win, time_from_start, tiles, solved):
     win.fill((255, 255, 255))
 
     for i in range(1, 10):
@@ -124,8 +119,9 @@ def redrawWindow(win, time_from_start, tiles):
             pygame.draw.line(win, (23, 23, 23), (i * WIN_WIDTH // 9, 0), (i * WIN_WIDTH // 9, WIN_HEIGHT - 50), 1)
             pygame.draw.line(win, (23, 23, 23), (0, i*(WIN_HEIGHT - 50) // 9), (WIN_WIDTH, i* (WIN_HEIGHT - 50) // 9), 1)
 
-    text = MAIN_FONT.render("Time: " + time.strftime("%Hh%Mm%Ss", time.gmtime(time_from_start)), True,  (0, 0, 0))
-    win.blit(text, (WIN_WIDTH - 20 - text.get_width(), 645))
+    if not solved:
+        text = MAIN_FONT.render("Time: " + time.strftime("%Hh%Mm%Ss", time.gmtime(time_from_start)), True,  (0, 0, 0))
+        win.blit(text, (WIN_WIDTH - 20 - text.get_width(), 645))
 
     for i in range(9):
         for j in range(9):
@@ -133,8 +129,9 @@ def redrawWindow(win, time_from_start, tiles):
 
     pygame.display.update()
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
+    solved = False
     win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
     pygame.display.set_caption("Sudoku")
     run = True
@@ -227,6 +224,18 @@ if __name__ == '__main__':
 
                 if event.key == pygame.K_SPACE:
                     solveGrid(tiles)
+                    if len(clicked) == 1:
+                        clicked[0].mode = 0
+                        clicked.pop()
+                    solved = True
+
+                if event.key == pygame.K_INSERT:
+                    for row in range(9):
+                        for col in range(9):
+                            tile = tiles[row][col]
+                            if tile.text != 0:
+                                tile.predefined = True
+                                tile.mode = 0
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
@@ -241,4 +250,4 @@ if __name__ == '__main__':
 
 
 
-        redrawWindow(win, time.time() - start, tiles)
+        redrawWindow(win, time.time() - start, tiles, solved)
