@@ -8,16 +8,18 @@ while True:
     width = int(cap.get(3))
     height = int(cap.get(4))
 
-    smaller_frame = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
-    image = np.zeros(frame.shape, np.uint8)
-    image[:height//2, :width//2] = smaller_frame
-    image[height // 2:, :width // 2] = smaller_frame
-    image[:height // 2, width // 2:] = smaller_frame
-    image[height // 2:, width // 2:] = smaller_frame
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    lower_blue = np.array([90, 50, 50])
+    upper_blue = np.array([130, 255, 255])
 
-    cv2.imshow("Video", image)
+    mask = cv2.inRange(hsv, lower_blue, upper_blue)
 
-    if cv2.waitKey(1)==ord('q'):
+    result = cv2.bitwise_and(frame, frame, mask=mask)
+
+    cv2.imshow("Video", result)
+    cv2.imshow("Mask", mask)
+
+    if cv2.waitKey(1) == ord('q'):
         break
 
 cap.release()
