@@ -1,5 +1,7 @@
+from numpy import zeros, int8
+
 n, m = map(int, input().split())
-lista = [[0, 0, 0] for i in range(4*n)]
+lista = zeros((4*n, 3), int8)
 answer = 0
 
 
