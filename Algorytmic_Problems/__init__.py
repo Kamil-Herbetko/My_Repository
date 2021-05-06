@@ -1,6 +1,7 @@
 from numpy import zeros, int8
+import sys
 
-n, m = map(int, input().split())
+n, m = map(int, sys.stdin.readline().split())
 lista = zeros((4*n, 3), int8)
 answer = 0
 
@@ -30,7 +31,7 @@ def check(v, tl, tr,yellow, blue):
 
 
 for i in range(m):
-    l, r, k = map(int, input().split())
+    l, r, k = map(int, sys.stdin.readline().split())
     update(1, 1, n, l, r, k)
 
 print(check(1, 1, n, 0, 0))
