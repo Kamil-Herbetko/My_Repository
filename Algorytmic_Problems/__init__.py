@@ -6,7 +6,6 @@ lista = zeros((4*n, 3), int8)
 answer = 0
 
 
-[0, 0, 0]
 def update(v, tl, tr, l, r, new_val):
     if l > r:
         return
