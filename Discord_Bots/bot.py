@@ -1,6 +1,13 @@
 import discord
 
-token = "ODM4MTMwOTgxOTYwNjc5NDU0.YI2oTQ.QTW6mDo87YdDJtEU4GTb5H8xfzo"
+
+def token():
+    with open("token.txt", "r") as f:
+        lines = f.readlines()
+        return lines[0].strip()
+
+
+token = token()
 id = 705131759658074112
 
 client = discord.Client()
