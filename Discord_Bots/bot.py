@@ -22,7 +22,8 @@ async def on_member_join(member):
 async def on_message(message):
     id = client.get_guild(705131759658074112)
     channels = ["ak"]
-    valid_users = ["Kamil Herbetko#7099"]
+    valid_users = ["Kamil Herbetko#7099", "Jakub Radzik
+#8825"]
 
     if str(message.channel) in channels and str(message.author) in valid_users:
         if message.content.find("!hello") != -1:
